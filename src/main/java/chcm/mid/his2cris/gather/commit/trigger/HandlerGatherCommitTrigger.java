@@ -10,7 +10,9 @@ import java.util.Base64.Decoder;
 import java.util.zip.GZIPInputStream;
 
 public class HandlerGatherCommitTrigger{	
-	
+	CheckroomSQL roomSQL = new CheckroomSQL();
+	CustomerSQL custSQL = new CustomerSQL();
+	CustExamSQL examSQL = new CustExamSQL();
 	public static String handlerRequest(String logger){
 		Decoder decoder = Base64.getDecoder();
 		byte[] decodedEvent = decoder.decode(logger);
