@@ -17,9 +17,7 @@ public class GetAwslogsServlet extends HttpServlet {
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//response.getWriter().append("GetAwslog!");
-		System.out.println("GetAwslog!");		
-		//getFileAction.main("");
+		System.out.println("GetAwslog!");
 		BufferedReader reader = request.getReader();
         char[] buf = new char[512];
         int len = 0;
@@ -33,7 +31,7 @@ public class GetAwslogsServlet extends HttpServlet {
             content = "";
         }        
         System.out.println(content+"[END]");
-		HandlerGatherCommitTrigger.handleRequest(content);
+		HandlerGatherCommitTrigger.handlerRequest(content);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
