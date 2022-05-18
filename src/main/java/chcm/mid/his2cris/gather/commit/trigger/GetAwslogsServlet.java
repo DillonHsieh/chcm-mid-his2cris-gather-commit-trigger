@@ -31,7 +31,10 @@ public class GetAwslogsServlet extends HttpServlet {
             content = "";
         }        
         System.out.println(content+"[END]");
-		HandlerGatherCommitTrigger.handlerRequest(content);
+		//HandlerGatherCommitTrigger.handlerRequest(content);
+		String testContent = "";
+		HandlerGatherCommitTrigger.handlerRequest(testContent);
+		
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
