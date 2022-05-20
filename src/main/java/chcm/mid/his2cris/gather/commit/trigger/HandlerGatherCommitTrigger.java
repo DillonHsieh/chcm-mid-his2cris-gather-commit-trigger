@@ -12,7 +12,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,7 +24,6 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.Base64.Decoder;
 import java.util.Map.Entry;
@@ -47,10 +45,11 @@ public class HandlerGatherCommitTrigger{
 	Statement stmt = null;
 	ResultSet resultSet = null;
 	private static final String ReportTable = "RPTTREPORTTBL";
-	private static final String HIS_IP = "http://10.62.3.9";
+	//private static final String HIS_IP = "http://10.62.3.9";
+	private static final String HIS_IP = "http://54.254.120.84";
 	private static final String[] syncCenter = new String[] {"01", "04"};
 	private static List<String> syncCenterList = Arrays.asList(syncCenter);
-	private static Map<String, List<CHCM>> commitMap = new HashMap<>();
+	//private static Map<String, List<CHCM>> commitMap = new HashMap<>();
 	
 	public String handlerRequest(String logger){
 		Decoder decoder = Base64.getDecoder();
@@ -77,22 +76,22 @@ public class HandlerGatherCommitTrigger{
 		        		case "0":
 		        			splitQuery = messageList.get(i).split("Query");
 			        		id = splitQuery[0].split("Z")[1].trim();
-			            	commitMap.put(id, new ArrayList<CHCM>());
+			        		GetAwslogsServlet.commitsMap.put(id, new ArrayList<CHCM>());
 		        			break;
 		        		case "1":
 		        			splitQuery = messageList.get(i).split("Query");
 			        		id = splitQuery[0].split("Z")[1].trim();
-			        		if(commitMap.containsKey(id)) {
+			        		if(GetAwslogsServlet.commitsMap.containsKey(id)) {
 			        			//執行AUTOCOMMIT=0到COMMIT之間的資料
-			        			syncUpdateDBTable(commitMap);
+			        			syncUpdateDBTable(GetAwslogsServlet.commitsMap);
 			        		}
 		        			break;
 		        		default:
 		        			splitQuery = messageList.get(i).split("Query");
 			        		id = splitQuery[0].split("Z")[1].trim();
-			        		if(commitMap.containsKey(id)) {
+			        		if(GetAwslogsServlet.commitsMap.containsKey(id)) {
 			        			CHCM chcm = new CHCM();
-			        			List<CHCM> chcmList = commitMap.get(id);
+			        			List<CHCM> chcmList = GetAwslogsServlet.commitsMap.get(id);
 			        			String CRUD = getCRUDKeyword(messageList.get(i));
 			        			chcm.setQueryID(id);
 			        			chcm.setAction(CRUD);
@@ -101,22 +100,22 @@ public class HandlerGatherCommitTrigger{
 			        			switch(CRUD) {
 				        		  case "C":
 				        			  chcm =saveCHCM4C(messageList.get(i));
-					        		  chcmList = commitMap.get(id);
+					        		  chcmList = GetAwslogsServlet.commitsMap.get(id);
 					        		  chcmList.add(chcm);
-					        		  commitMap.put(id, chcmList);
+					        		  GetAwslogsServlet.commitsMap.put(id, chcmList);
 				        			  break;
 				        		  case "D":
 				        			  chcm =saveCHCM4D(messageList.get(i));
 				        			  if(chcm.getTable().equals(ReportTable)) {
-				        				  chcmList = commitMap.get(id);
+				        				  chcmList = GetAwslogsServlet.commitsMap.get(id);
 						        		  chcmList.add(chcm);
 				        			  }
 				        			  break;
 			        			  default:
 			        				  chcm =saveCHCM4U(messageList.get(i));
-					        		  chcmList = commitMap.get(id);
+					        		  chcmList = GetAwslogsServlet.commitsMap.get(id);
 					        		  chcmList.add(chcm);
-					        		  commitMap.put(id, chcmList);
+					        		  GetAwslogsServlet.commitsMap.put(id, chcmList);
 			        			}		        			
 			        			
 			        		}  				  
@@ -458,7 +457,7 @@ public class HandlerGatherCommitTrigger{
 			, String desc, int index, String status) {
     	try {
     		if(conn == null) {
-    			conn = JDBCUtil();
+    			conn = GetAwslogsServlet.JDBCUtil();
     			System.out.println("建立一個connection...");
     		}
     		stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -479,7 +478,7 @@ public class HandlerGatherCommitTrigger{
 	private JSONObject getRoomItemData(String strSql, String orgNo, String desc) {
     	try {
     		if(conn == null) {
-    			conn = JDBCUtil();
+    			conn = GetAwslogsServlet.JDBCUtil();
     			System.out.println("建立一個connection...");
     		}
     		stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -564,7 +563,7 @@ public class HandlerGatherCommitTrigger{
 	private JSONObject getCustData(SyncAction syncAction, String strSql) {
     	try {
     		if(conn == null) {
-    			conn = JDBCUtil();
+    			conn = GetAwslogsServlet.JDBCUtil();
     			System.out.println("建立一個connection...");
     		}
     		stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -651,7 +650,7 @@ public class HandlerGatherCommitTrigger{
 	private JSONObject getExamineItem(SyncAction syncAction, String strSql, String caseNo) {
     	try {
     		if(conn == null) {
-    			conn = JDBCUtil();
+    			conn = GetAwslogsServlet.JDBCUtil();
     			System.out.println("建立一個connection...");
     		}
     		stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -752,15 +751,28 @@ public class HandlerGatherCommitTrigger{
             connection.setRequestMethod("POST");
             connection.setUseCaches(false);
             connection.setInstanceFollowRedirects(true);
-            connection.setRequestProperty("Content-Type","application/json; charset=UTF-8");       
+            connection.setRequestProperty("Content-Type","application/json; charset=UTF-8");            
             connection.connect();
             System.out.println("連線至API成功......");
             DataOutputStream out = new DataOutputStream(connection.getOutputStream());
             out.write(data2Cris.toString().getBytes("UTF-8"));//這樣可以處理中文亂碼問題
             out.flush();
             out.close();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    connection.getInputStream()));
+            
+            
+            int statusCode = connection.getResponseCode();
+
+            InputStream is = null;
+
+            if (statusCode >= 200 && statusCode < 400) {
+               // Create an InputStream in order to extract the response object
+               is = connection.getInputStream();
+            }
+            else {
+               is = connection.getErrorStream();
+            }
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader reader = new BufferedReader(isr);
             String lines;
             while ((lines = reader.readLine()) != null) { 
                 lines = new String(lines.getBytes(), "utf-8");
@@ -866,46 +878,7 @@ public class HandlerGatherCommitTrigger{
 		return jsonObj;
 	}
 	
-	private Connection JDBCUtil() {
-		Connection connection = null;
-//		String driverClass = null;
-		String url = null;
-		String name = null;
-		String password = null;
 
-		// 讀取jdbc.properties
-		try {
-			// 1.建立一個屬性配置物件
-			Properties properties = new Properties();
-
-			// 1.對應檔案位於工程根目錄
-			// InputStream is = new FileInputStream("jdbc.properties");
-
-			// 2.使用類載入器,讀取drc下的資原始檔 對應檔案位於src目錄底下 建議使用
-			InputStream is = HandlerGatherCommitTrigger.class.getClassLoader().getResourceAsStream("jdbc.properties");
-			// 2.匯入輸入流,抓取異常
-			properties.load(is);
-			// 3.讀取屬性
-//			driverClass = properties.getProperty("driverClass");
-			url = properties.getProperty("url");
-			name = properties.getProperty("name");
-			password = properties.getProperty("password");
-			
-			
-			// 2. 建立連線 引數一： 協議 + 訪問的資料庫 ， 引數二： 使用者名稱 ， 引數三： 密碼。
-			try {
-//				Class.forName(driverClass);
-				connection = DriverManager.getConnection(url, name, password);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		return connection;
-	}
 	
 	/**
 	 * 釋放資源
