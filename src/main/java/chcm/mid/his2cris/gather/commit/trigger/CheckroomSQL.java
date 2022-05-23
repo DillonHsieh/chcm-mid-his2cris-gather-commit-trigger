@@ -14,7 +14,7 @@ public class CheckroomSQL {
 				+ "       C.STATUS ROOMSTATUS,\n"
 				+ "       CASE WHEN (F.ExamAvgTime IS NULL) THEN E.ExamAvgTime ELSE F.ExamAvgTime END ExamAvgTime,\n"
 				+ "       CASE WHEN (F.ExamIntervalTime IS NULL) THEN E.ExamIntervalTime ELSE F.ExamIntervalTime END ExamIntervalTime\n"
-				+ "FROM  (SELECT X.*\n"
+				+ " FROM  (SELECT X.*\n"
 				+ "	      FROM DB2INST1.CMNBEBOARDDEVICETBL X JOIN DB2INST1.CMNBEBOARDLAYOUTTBL Y on X.ORGNO = Y.ORGNO AND X.LayoutId = Y.LayoutId\n" 
 				+"	      WHERE Y.TYPE ='2') A LEFT JOIN DB2INST1.CMNBEBOARDLOCATIONMAPTBL B ON A.ORGNO = B.ORGNO AND A.DEVICEID = B.DEVICEID\n"
 				+"	                           LEFT JOIN DB2INST1.CMNBEBOARDLOCATIONTBL C ON B.ORGNO = C.ORGNO AND B.CLIENTID = C.CLIENTID\n"
@@ -37,7 +37,7 @@ public class CheckroomSQL {
 				+ "       C.STATUS ROOMSTATUS,\n"
 				+ "       CASE WHEN (F.ExamAvgTime IS NULL) THEN E.ExamAvgTime ELSE F.ExamAvgTime END ExamAvgTime,\n"
 				+ "       CASE WHEN (F.ExamIntervalTime IS NULL) THEN E.ExamIntervalTime ELSE F.ExamIntervalTime END ExamIntervalTime\n"
-				+ "FROM  (SELECT X.*\n"
+				+ " FROM  (SELECT X.*\n"
 				+ "      FROM DB2INST1.CMNBEBOARDDEVICETBL X JOIN DB2INST1.CMNBEBOARDLAYOUTTBL Y on X.ORGNO = Y.ORGNO AND X.LayoutId = Y.LayoutId\n"
 				+ "      WHERE Y.TYPE ='2') A LEFT JOIN DB2INST1.CMNBEBOARDLOCATIONMAPTBL B ON A.ORGNO = B.ORGNO AND A.DEVICEID = B.DEVICEID\n"
 				+ "                           LEFT JOIN DB2INST1.CMNBEBOARDLOCATIONTBL C ON B.ORGNO = C.ORGNO AND B.CLIENTID = C.CLIENTID\n"
@@ -63,7 +63,7 @@ public class CheckroomSQL {
 				+ "       C.STATUS ROOMSTATUS,\n"
 				+ "       CASE WHEN (F.ExamAvgTime IS NULL) THEN E.ExamAvgTime ELSE F.ExamAvgTime END ExamAvgTime,\n"
 				+ "       CASE WHEN (F.ExamIntervalTime IS NULL) THEN E.ExamIntervalTime ELSE F.ExamIntervalTime END ExamIntervalTime \n"
-				+ "FROM  (SELECT X.*\n"
+				+ " FROM  (SELECT X.*\n"
 				+ "      FROM DB2INST1.CMNBEBOARDDEVICETBL X JOIN DB2INST1.CMNBEBOARDLAYOUTTBL Y on X.ORGNO = Y.ORGNO AND X.LayoutId = Y.LayoutId \n"
 				+ "      WHERE Y.TYPE ='2') A LEFT JOIN DB2INST1.CMNBEBOARDLOCATIONMAPTBL B ON A.ORGNO = B.ORGNO AND A.DEVICEID = B.DEVICEID\n"
 				+ "                           LEFT JOIN DB2INST1.CMNBEBOARDLOCATIONTBL C ON B.ORGNO = C.ORGNO AND B.CLIENTID = C.CLIENTID\n"
@@ -79,17 +79,17 @@ public class CheckroomSQL {
 	
 	public String get4CheckroomItem(String OrgNo, String IP) {
 		return "SELECT A.ORGNO,A.LOCNO,B.DAYTYPE, A.CATENO, A.EXAMITEM\n"
-				+ "FROM DB2INST1.CMNBEXAMITEMLOCATIONTBL A LEFT JOIN \n"
-				+ "DB2INST1.SCHBCATEGORYTBL B ON A.ORGNO = B.ORGNO AND A.CATENO = B.UNO\n"
-				+ "JOIN (SELECT ORGNO, EXAMITEM FROM DB2INST1.CMNBEXAMITEMDATATBL \n"
-				+ "WHERE ACTIVEFLAG = '0' AND IsSyncAutoSchedule = 'Y') C \n"
-				+ "ON A.ORGNO = C.ORGNO AND A.EXAMITEM = C.EXAMITEM\n"
-				+ "WHERE (A.ORGNO,A.LOCNO) in\n"
+				+ " FROM DB2INST1.CMNBEXAMITEMLOCATIONTBL A LEFT JOIN \n"
+				+ " DB2INST1.SCHBCATEGORYTBL B ON A.ORGNO = B.ORGNO AND A.CATENO = B.UNO\n"
+				+ " JOIN (SELECT ORGNO, EXAMITEM FROM DB2INST1.CMNBEXAMITEMDATATBL \n"
+				+ " WHERE ACTIVEFLAG = '0' AND IsSyncAutoSchedule = 'Y') C \n"
+				+ " ON A.ORGNO = C.ORGNO AND A.EXAMITEM = C.EXAMITEM\n"
+				+ " WHERE (A.ORGNO,A.LOCNO) in\n"
 				+ "  (SELECT OrgNo,LocNo\n"
 				+ "   FROM DB2INST1.CMNBLOCATIONIPTBL\n"
 				+ "   WHERE ORGNO = '"+OrgNo+"' \n"
 				+ "     AND IP = '"+IP+"')\n"
-				+ "AND B.DAYTYPE > ''\n"
-				+ "AND (A.CHKDISPLAY IS NULL  OR A.CHKDISPLAY = '' OR A.CHKDISPLAY != '1')";
+				+ " AND B.DAYTYPE > ''\n"
+				+ " AND (A.CHKDISPLAY IS NULL  OR A.CHKDISPLAY = '' OR A.CHKDISPLAY != '1')";
 	}
 }
