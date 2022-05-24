@@ -48,7 +48,7 @@ public class HandlerGatherCommitTrigger{
 	Statement stmt = null;
 	ResultSet resultSet = null;
 	private static final String ReportTable = "RPTTREPORTTBL";
-	private static final String HIS_IP = "http://54.254.120.84";//"http://10.62.3.9"
+	private static final String HIS_IP = "http://10.62.3.9";//"http://54.254.120.84"
 	private static final String[] syncCenter = new String[] {"01", "04"};
 	private static List<String> syncCenterList = Arrays.asList(syncCenter);
 	
@@ -157,6 +157,12 @@ public class HandlerGatherCommitTrigger{
 	enum SyncAction {
     	CREATE, UPDATE, SYNC, DELETE, PERSON_UPDATE
     }
+	
+	private String sqltoJsonToString(String sql) {
+		return new Gson().toJson(sql).replace("\\n\\t\\t", " ").replace("\\n", " ")
+    			.replace("\\t", " ").replace("\\u003d", "=").replace("\\u0027", "'")
+    			.replace("\\u003c", "<").replace("\\u003e", ">");		
+	}
 	
 	/*
      *拆解AWS_logEvents_message中的Data 
@@ -332,9 +338,7 @@ public class HandlerGatherCommitTrigger{
     public String syncCheckroomData3_1(String orgNo, String ClientID
     		, int index, String status) {
     	String strSql = roomSQL.get3_1CheckroomData(orgNo, ClientID);
-    	String gsonSql = new Gson().toJson(strSql).replace("\\n\\t\\t", " ").replace("\\n", " ")
-    			.replace("\\t", " ").replace("\\u003d", "=").replace("\\u0027", "'");
-    	System.out.println("get3_1CheckroomDataSQL: " + gsonSql);
+    	System.out.println("get3_1CheckroomDataSQL: " + sqltoJsonToString(strSql));
     	JSONObject data2Cris = getCheckroomJSON(strSql, orgNo, "監測資料表-1", index, status);
     	if(data2Cris == null)
     		return null;
@@ -344,9 +348,7 @@ public class HandlerGatherCommitTrigger{
     
     public void syncCheckroomData3_2(String orgNo, String Uno) {
     	String strSql = roomSQL.get3_2CheckroomData(orgNo, Uno);
-    	String gsonSql = new Gson().toJson(strSql).replace("\\n\\t\\t", " ").replace("\\n", " ")
-    			.replace("\\t", " ").replace("\\u003d", "=").replace("\\u0027", "'");
-    	System.out.println("get3_2CheckroomDataSQL: " + gsonSql );
+    	System.out.println("get3_2CheckroomDataSQL: " + sqltoJsonToString(strSql) );
     	JSONObject data2Cris = getCheckroomJSON(strSql, orgNo, "監測資料表-2", 2, "");
     	if(data2Cris != null) {
 	    	URL url = getURL("syncMonitorData");
@@ -355,9 +357,7 @@ public class HandlerGatherCommitTrigger{
     }
     public void syncCheckroomData3_3(String orgNo, String UID) {
     	String strSql = roomSQL.get3_3CheckroomData(orgNo, UID);
-    	String gsonSql = new Gson().toJson(strSql).replace("\\n\\t\\t", " ").replace("\\n", " ")
-    			.replace("\\t", " ").replace("\\u003d", "=").replace("\\u0027", "'");
-    	System.out.println("get3_3CheckroomDataSQL: " + gsonSql );
+    	System.out.println("get3_3CheckroomDataSQL: " + sqltoJsonToString(strSql) );
     	JSONObject data2Cris = getCheckroomJSON(strSql, orgNo, "監測資料表-3", 3, "");
     	if(data2Cris != null) {
 	    	URL url = getURL("syncMonitorData");
@@ -370,9 +370,7 @@ public class HandlerGatherCommitTrigger{
      * */
     public void syncCheckroomItem4(String orgNo, String IP) {
     	String strSql = roomSQL.get4CheckroomItem(orgNo, IP);
-    	String gsonSql = new Gson().toJson(strSql).replace("\\n\\t\\t", " ").replace("\\n", " ")
-    			.replace("\\t", " ").replace("\\u003d", "=").replace("\\u0027", "'");
-    	System.out.println("get4CheckroomItemSQL: " + gsonSql );
+    	System.out.println("get4CheckroomItemSQL: " + sqltoJsonToString(strSql) );
     	JSONObject data2Cris = getRoomItemData(strSql, orgNo, "檢查室項目");
     	if(data2Cris != null) {
 	    	URL url = getURL("syncMonitorItem");
@@ -421,24 +419,18 @@ public class HandlerGatherCommitTrigger{
     	switch(action) {
     		case "C":
     			strSql = getSqlStr(SyncAction.CREATE, no);
-    	    	String gsonSqlC = new Gson().toJson(strSql).replace("\\n\\t\\t", " ").replace("\\n", " ")
-    	    			.replace("\\t", " ").replace("\\u003d", "=").replace("\\u0027", "'");
-    			System.out.println("syncCustomerDataChanged_U: " + gsonSqlC );
+    			System.out.println("syncCustomerDataChanged_C: " + sqltoJsonToString(strSql) );
     			data2Cris = getCustData(SyncAction.CREATE, strSql);
     			break;
     		case "U":
     			strSql = custSQL.getCustomerUpdate2_1(today, no); //getSqlStr(SyncAction.UPDATE, no);
-    	    	String gsonSqlU = new Gson().toJson(strSql).replace("\\n\\t\\t", " ").replace("\\n", " ")
-    	    			.replace("\\t", " ").replace("\\u003d", "=").replace("\\u0027", "'");
-    			System.out.println("syncCustomerDataChanged_U: " + gsonSqlU );
+    			System.out.println("syncCustomerDataChanged_U: " + sqltoJsonToString(strSql) );
     			data2Cris = getCustData(SyncAction.UPDATE, strSql);
     			break;
     		case "PU":
     			//personTable
     			strSql = custSQL.getCustomerUpdate2_2(today, no); //getSqlStr(SyncAction.PERSON_UPDATE, no);
-    	    	String gsonSqlPU = new Gson().toJson(strSql).replace("\\n\\t\\t", " ").replace("\\n", " ")
-    	    			.replace("\\t", " ").replace("\\u003d", "=").replace("\\u0027", "'");
-    			System.out.println("syncCustomerDataChanged_U: " + gsonSqlPU );
+    			System.out.println("syncCustomerDataChanged_PU: " + sqltoJsonToString(strSql) );
     			data2Cris = getCustData(SyncAction.UPDATE, strSql);
     			break;
     	}
@@ -454,9 +446,7 @@ public class HandlerGatherCommitTrigger{
     	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
     	String today = LocalDate.now( ZoneId.of( "Asia/Taipei" ) ).format(formatter);
     	String strSql = examSQL.getExamine(today, caseNo, examItem); //getExamine(today, caseNo, examItem);
-    	String gsonSql = new Gson().toJson(strSql).replace("\\n\\t\\t", "").replace("\\n", "")
-    			.replace("\\t", "").replace("\\u003d", "=").replace("\\u0027", "'");
-    	System.out.println("syncCustomerExamineItems_"+action+": " + gsonSql );
+    	System.out.println("syncCustomerExamineItems_"+action+": " + sqltoJsonToString(strSql) );
     	JSONObject data2Cris = null;
     	URL url = getURL("syncCustomerExamItem");
     	
