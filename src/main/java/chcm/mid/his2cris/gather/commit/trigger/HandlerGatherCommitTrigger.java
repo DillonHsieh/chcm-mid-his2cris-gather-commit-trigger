@@ -195,6 +195,7 @@ public class HandlerGatherCommitTrigger{
 	    	String[] values = splitWhere[1].split("AND");
 	    	chcm.setCaseNo(values[0].split("=")[1].replaceAll("'", "").trim());
 	    	chcm.setExamItem(values[1].split("=")[1].replaceAll("_binary", "").replaceAll("'", "").trim());
+	    	chcm.setCancelVal("Y");
 		}
 		return chcm;
     }
