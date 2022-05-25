@@ -181,6 +181,8 @@ public class HandlerGatherCommitTrigger{
 			values = splitFristBracket[2].split(",");
 			chcm.setCaseNo(values[0].trim());
 			chcm.setExamItem(values[1].replaceAll("_binary", "").replaceAll("'", "").trim());
+			chcm.setCancelVal("N");
+			break;
     	}
 		return chcm;
     }
