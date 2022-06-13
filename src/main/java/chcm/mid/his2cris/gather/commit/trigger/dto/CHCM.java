@@ -21,4 +21,5 @@ public class CHCM {
     private String queryID;//AWS log message的ID
     private String cancelVal;//RPTTREPORTTBL cancelFlag=Y，刪除
     private long timestamp;
+    private COMMIT commit;
 }
