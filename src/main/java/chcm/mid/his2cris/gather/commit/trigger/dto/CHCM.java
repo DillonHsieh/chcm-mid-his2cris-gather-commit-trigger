@@ -1,4 +1,6 @@
 package chcm.mid.his2cris.gather.commit.trigger.dto;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,5 +23,5 @@ public class CHCM {
     private String queryID;//AWS log message的ID
     private String cancelVal;//RPTTREPORTTBL cancelFlag=Y，刪除
     private long timestamp;
-    private COMMIT commit;
+    private List<COMMIT> commit;
 }
