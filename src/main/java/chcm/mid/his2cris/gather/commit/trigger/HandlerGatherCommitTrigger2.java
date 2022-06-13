@@ -62,7 +62,7 @@ public class HandlerGatherCommitTrigger2{
 		chcms.add(chcmB);
 		System.out.println("chcms = "+chcms.toString());
 		
-		ArrayList<COMMIT> result = (ArrayList<COMMIT>) chcms.stream().map(x ->x.getCommit()).collect(Collectors.toList());
+		List<COMMIT> result = chcms.stream().map(x ->x.getCommit()).collect(Collectors.toList());
 		System.out.println(result.toString());
 	}
 
